@@ -1,18 +1,12 @@
-export type Subnet = {
-  cidr:  string;
-  start: string;
-  end:   string;
-  mask:  string;
-  size:  number;
+import type { Subnet } from "../context/SubnetContext";
+
+type SubnetDetailsProps = {
+  selectedSubnet: null | Subnet;
 };
 
-export const SubnetDetails = () => {
-  const selectedSubnet: Subnet = {
-    cidr:  "192.168.43.1/24",
-    start: "192.168.43.0",
-    end:   "192.168.43.255",
-    mask:  "255.255.255.0",
-    size:  256,
+export const SubnetDetails = ({ selectedSubnet }: SubnetDetailsProps) => {
+  if (selectedSubnet === null) {
+    return null;
   };
 
   return (

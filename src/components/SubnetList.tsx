@@ -1,32 +1,56 @@
-import { Button } from "./Button";
-import type { Subnet } from "./SubnetDetails";
+import type { Dispatch, SetStateAction } from "react";
+import { useSubnetContext, type Subnet } from "../context/SubnetContext";
+import { GhostDestructiveButton } from "./GhostDestructiveButton";
+import { PrimaryButton } from "./PrimaryButton";
+import { twMerge } from "tailwind-merge";
 
-export const SubnetList = () => {
-  const subnets: Subnet[] = [
-    {
-      cidr:  "192.168.43.1/24",
-      start: "192.168.43.0",
-      end:   "192.168.43.255",
-      mask:  "255.255.255.0",
-      size:  256,
-    },
-    {
-      cidr:  "10.0.0.1/8",
-      start: "10.0.0.0",
-      end:   "10.255.255.255",
-      mask:  "255.0.0.0",
-      size:  67,
-    }
-  ]; 
+type SubnetListProps = {
+  setSelectedSubnet: Dispatch<SetStateAction<null | Subnet>>;
+  selectedSubnet: null | Subnet;
+};
+
+export const SubnetList = ({ selectedSubnet, setSelectedSubnet }: SubnetListProps) => {
+  const { subnets, deleteSubnet, splitSubnet } = useSubnetContext();
 
   return (
     <div className="flex flex-col gap-2">
       {subnets.map(s => (
-        <div className="flex justify-between items-center bg-zinc-800 py-2 px-4 rounded-lg">
-          {s.cidr}
-          <div className="flex gap-2">
-            <Button>Split</Button>
-            <Button>Delete</Button>
+        <div 
+          className={twMerge(
+            "flex items-center bg-zinc-800 rounded-lg",
+            selectedSubnet !== null && selectedSubnet.id === s.id ? "ring-2 ring-blue-500" : "",
+          )}
+          key={s.id}
+        >
+          <div 
+            className="py-2 ps-4 flex-1"
+            onClick={() => {
+              setSelectedSubnet(s);
+            }}  
+          >
+            {s.cidr}
+          </div>
+          <div 
+            className="flex gap-2 pe-4" 
+          >
+            <PrimaryButton 
+              className="rounded-xl"
+              onClick={() => setSelectedSubnet(splitSubnet(s.id))}
+              disabled={s.size === 1}
+            >
+              Split
+            </PrimaryButton>
+            <GhostDestructiveButton 
+              className="rounded-xl"
+              onClick={() => {
+                deleteSubnet(s.id);
+                if (selectedSubnet !== null && s.id == selectedSubnet.id) {
+                  setSelectedSubnet(null);
+                }
+              }}
+            >
+              Delete
+            </GhostDestructiveButton>
           </div>
         </div>
       ))}
