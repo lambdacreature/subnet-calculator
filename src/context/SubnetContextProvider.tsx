@@ -40,7 +40,7 @@ export const SubnetContextProvider = ({ children }:SubnetContextProviderProps) =
      * half right below it
      *
      * */
-    const targetSubnet = subnets.find(s => s.id == id) as Subnet;
+    const targetSubnet = subnets.find(s => s.id == id);
     const targetIndex  = subnets.indexOf(targetSubnet);
 
     const newCidrMask = `/${parseInt(formatCidrMask(parseAddr(targetSubnet.mask)).slice(1))+1}`;
